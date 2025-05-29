@@ -1,7 +1,14 @@
+import { TransactionFile } from './transaction-file';
+
 export class TransactionResponse {
-  totaolOfValidTransactions: number;
+  validTransactions: {
+    total: number;
+    suspicios: TransactionFile[];
+    valid: TransactionFile[];
+  };
   invalidTransactions: {
     total: number;
-    motivos: [];
+    duplicated: TransactionFile[];
+    negated: TransactionFile[];
   };
 }

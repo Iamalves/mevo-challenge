@@ -1,36 +1,39 @@
 import { Injectable } from '@nestjs/common';
-import * as CSV from 'csv-string';
 import { TransactionResponse } from './dto/transaction-reponse';
-// import { UpdateTransactionDto } from './dto/update-transaction.dto';
-import * as fs from 'fs';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { TransactionProcessor } from './utils/transaction-processor';
+import { Transaction } from './entities/transaction.entity';
 
 @Injectable()
 export class TransactionService {
-  process(fileTransaction: string): void {
-    console.log(fileTransaction);
-    const maximumAmountForTransacion = 5000000;
-    const parsedCsv = CSV.parse(fileTransaction, ';');
-    // const fileTransactionRead =
-    console.log(parsedCsv);
+  constructor(
+    @InjectModel(Transaction.name)
+    private transactionSchema: Model<Transaction>,
+  ) {}
 
-    const seen = new Set<String[]>();
+  async process(
+    fileTransaction: Express.Multer.File,
+  ): Promise<TransactionResponse> {
+    try {
+      const buffer = fileTransaction.buffer.toString();
+      const response = TransactionProcessor.process(buffer);
 
-    for (let i = 0; i < parsedCsv.length; i++) {
-      // parsedCsv[0] =
+      const createdTransaction = new this.transactionSchema({
+        ...response,
+        file: fileTransaction.originalname,
+      });
+      await createdTransaction.save();
 
-      const amount = parsedCsv[i + 1][2];
-      if (Number(amount) === 0) 'invalid';
-      else if (Number(amount) > maximumAmountForTransacion) 'suspeita';
-      else if (seen.has(parsedCsv[i + 1])) 'duplicada';
-      else {
-        seen.add(parsedCsv[i + 1]);
-      }
+      return response;
+    } catch (error) {
+      console.log(error);
+      throw error;
     }
+  }
 
-    // return;
+  async findTransactionByFile(file: string) {
+    const reponse = await this.transactionSchema.findOne({ file });
+    return reponse;
   }
 }
-
-//Valores Suspeitos: válidas para inclusão no banco de dados.
-
-//Um resumo das operações não validadas (com o motivo da invalidade) deve ser gerado e armazenado no banco de dados juntamente com o nome do arquivo.
