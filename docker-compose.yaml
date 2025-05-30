@@ -20,7 +20,12 @@ services:
     depends_on:
       - mongo
     environment:
-      - MONGO_HOST=mongodb://root:root@mongo:27017/nest?authSource=admin
+      - MONGO_USERNAME=root
+      - MONGO_PASSWORD=root
+      - MONGO_HOST=mongo
+      - MONGO_PORT=27017
+      - MONGO_DB=nest
+      - MONGO_AUTH_SOURCE=admin
     command: ['node', 'dist/main.js']
 
 volumes:
