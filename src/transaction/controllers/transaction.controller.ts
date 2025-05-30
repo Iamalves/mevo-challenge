@@ -13,8 +13,8 @@ import {
 import { TransactionService } from '../services/transaction.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FindTransactionPresenter } from '../presenters/find-transaction.presenter';
-import { ALLOW_FILE_TYPES } from '../constants/allowed-file-types';
 import { UploadTransactionPresenter } from '../presenters/upload-transaction.presenter';
+import { ValidateMimeType } from '../utils/validate-mime-type';
 
 @Controller('/transaction')
 export class TransactionController {
@@ -30,9 +30,7 @@ export class TransactionController {
     )
     file: Express.Multer.File,
   ) {
-    if (!ALLOW_FILE_TYPES.includes(file.mimetype)) {
-      throw new BadRequestException(`Invalid mimetype: ${file.mimetype}`);
-    }
+    ValidateMimeType.validate(file.mimetype);
 
     const transaction = await this.transactionService.process(file);
     return new UploadTransactionPresenter(transaction);
