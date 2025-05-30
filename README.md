@@ -83,6 +83,32 @@ Projeto backend desenvolvido com NestJS e MongoDB, orquestrado via Docker Compos
   npm run format
   ```
 
+## 📡 Endpoints da API
+
+### 1. Upload de arquivo CSV de transações
+
+- **URL:** `/transaction/upload`
+- **Método:** `POST`
+- **Descrição:** Endpoint para upload de um arquivo CSV contendo transações. O arquivo é validado quanto ao tamanho (até 1GB) e tipo MIME permitido.
+- **Parâmetros:**
+  - `file` (form-data): arquivo CSV a ser enviado.
+- **Respostas:**
+  - `200 OK`: Retorna dados do processamento do arquivo via `UploadTransactionPresenter`.
+  - `400 Bad Request`: Caso o arquivo tenha tipo MIME inválido ou ultrapasse o limite de tamanho.
+
+### 2. Buscar transações por nome do arquivo
+
+- **URL:** `/transaction/:fileName`
+- **Método:** `GET`
+- **Descrição:** Retorna um resumo sobre as transações processadas associadas a um arquivo pelo seu nome.
+- **Parâmetros:**
+  - `fileName`: nome do arquivo CSV a ser consultado.
+  - Exemplo: "file": "1748568577073-output-9.csv",
+- **Respostas:**
+
+  - `200 OK`: Retorna as transações via `FindTransactionPresenter`.
+  - `404 Not Found`: Caso o arquivo com o nome especificado não exista.
+
 - **Gerar arquivos CSV randomizados para testes**
 
   Na raiz do projeto, execute:
