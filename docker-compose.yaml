@@ -1,8 +1,27 @@
+version: '3.8'
+
 services:
   mongo:
-    image: mongo:8.0.3
+    image: mongo:8.0.9
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=root
     ports:
       - 29017:27017
+    volumes:
+      - mongo_data:/data/db
+
+  api:
+    build:
+      context: .
+      dockerfile: .docker/aplicacao/Dockerfile
+    ports:
+      - 3000:3000
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_HOST=mongodb://root:root@mongo:27017/nest?authSource=admin
+    command: ['node', 'dist/main.js']
+
+volumes:
+  mongo_data:

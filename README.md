@@ -1,52 +1,115 @@
-# Descrição do Teste Técnico
+# Mevo Challenge
 
-## Como começar
-- Faça um fork deste teste na sua conta do github.
-- Crie uma branch com o seu nome.
-- Realize commits com frequencia.
+Projeto backend desenvolvido com NestJS e MongoDB, orquestrado via Docker Compose.
 
-## Objetivo
-Implementar uma API REST que:
-- Receba um arquivo CSV contendo operações financeiras.
-- Realize validações específicas nas operações.
-- Registre as operações validadas em um banco de dados.
-- Gere um resumo das operações não validadas.
+---
 
-## Requisitos Funcionais
+## 🚀 Tecnologias utilizadas
 
-### Recebimento do Arquivo
-- A API deve oferecer um endpoint para o upload de arquivos CSV.
-- O arquivo deve seguir o formato especificado: `from;to;amount`.
+- **NestJS** (Node.js Framework)
+- **MongoDB** (Banco de dados NoSQL)
+- **Docker & Docker Compose** (para containerização e orquestração)
+- **Jest** (testes)
+- **ESLint & Prettier** (lint e formatação)
 
-### Validações
-1. **Valores Negativos**: Operações com valores negativos são consideradas inválidas.
-2. **Operações Duplicadas**: Uma operação é duplicada se existir outra operação no arquivo com os mesmos valores de `to`, `from`, e `amount`. Tais operações são consideradas inválidas.
-3. **Valores Suspeitos**: Operações com valores acima de R$50.000,00 são marcadas como suspeitas, mas ainda válidas para inclusão no banco de dados.
-4. Os Valores estão em centavos, desta forma 100 = R$1
+---
 
-### Processamento do Arquivo
-- O arquivo deve ser lido e as operações devem ser validadas conforme as regras acima.
-- As operações validadas devem ser armazenadas em um banco  de dados (você decide).
-- Um resumo das operações não validadas (com o motivo da invalidade) deve ser gerado e armazenado no banco de dados juntamente com o nome do arquivo.
+## 📁 Estrutura do projeto
 
-### Resposta da API
-Após o processamento do arquivo, a  API deve retornar uma resposta contendo:
-- Número de operações validadas e inseridas no banco de dados.
-- Resumo das operações não validadas, incluindo o motivo.
+- **src/**: Código-fonte da aplicação NestJS
+- **payloads/**: Arquivos para testes (CSV)
+- **.docker/aplicacao/**: Dockerfile para construir a imagem da API
+- **.docker/mongo/**: Dockerfile para construir a imagem do Mongo
+- **transactionGenerator.js**: Script para gerar arquivos CSV randomizados para testes
+- **Transaction-api.postman_collection.json** : Coleção Postman com todos os endpoints da API para testes
 
-### Geraçao do Arquivo
-- Utilize o script transactionGenerator.js para gerar o arquivo com as transaçoes.
+---
 
-### O que esperamos:
-- Uso de Node.js com TypeScript.
-- Aplicação de conceitos para a criação de uma API REST eficiente.
-- Estratégias para a solução de problemas em tempo real.
-- Capacidade de testar e validar sua solução.
-- Dockerização da aplicação (se possível dentro do tempo alocado).
-- Persistência em banco de dados.
+## ⚙️ Como executar
 
-### Critérios de Avaliação:
-- Testabilidade e Manutenibilidade.
-- Eficiência e Preparo para Escalabilidade.
-- Modularidade, Organização e Reutilização de Código.
-- A preocupação com segurança também será considerada um plus na sua solução.
+### Pré-requisitos
+
+- Docker e Docker Compose instalados
+
+### Passos
+
+1. Clone o repositório:
+
+   ```bash
+   git clone <URL_DO_REPOSITORIO>
+   cd mevo-challenge
+   ```
+
+2. Inicialize os containers com Docker Compose:
+
+   ```bash
+   docker-compose up --build
+   ```
+
+   - O container **mongo** ficará disponível na porta `29017`
+   - A API estará acessível na porta `3000`
+
+3. A API se conecta automaticamente ao MongoDB com a string:
+
+   ```
+   mongodb://root:root@mongo:27017/nest?authSource=admin
+   ```
+
+---
+
+## 🛠️ Scripts úteis
+
+- **Buildar projeto NestJS:**
+
+  ```bash
+  npm run build
+  ```
+
+- **Rodar API em modo desenvolvimento com hot reload:**
+
+  ```bash
+  npm run start:dev
+  ```
+
+- **Rodar testes:**
+
+  ```bash
+  npm test
+  ```
+
+- **Formatar código:**
+
+  ```bash
+  npm run format
+  ```
+
+- **Gerar arquivos CSV randomizados para testes**
+
+  Na raiz do projeto, execute:
+
+  ```bash
+  node transactionGenerator.js <quantidade> <nome_arquivo.csv>
+  ```
+
+  Exemplo:
+
+  ```bash
+  node transactionGenerator.js 50 output-4.csv
+  ```
+
+  Os arquivos gerados serão criados dentro da pasta `payloads` para facilitar novos testes.
+
+---
+
+## 📬 Testando os endpoints
+
+Use a coleção Postman fornecida (`Transaction-api.postman_collection.json`) para importar os endpoints e realizar chamadas à API rapidamente.
+
+---
+
+## 📝 Observações
+
+- O arquivo `main.ts` inicializa a aplicação NestJS e escuta na porta definida pela variável de ambiente `PORT` (padrão 3000).
+- Os dados do MongoDB são persistidos em volume Docker para garantir que não se percam após o container ser parado.
+
+---
