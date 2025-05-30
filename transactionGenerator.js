@@ -95,7 +95,7 @@ if (linesCount < 7) {
 const csvContent = generateCSVLines(linesCount);
 
 if (outputFile) {
-    const dir = path.join(__dirname, 'filesForTests');
+    const dir = path.join(__dirname, 'payloads');
 
     if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir);
